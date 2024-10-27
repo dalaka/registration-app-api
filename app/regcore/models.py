@@ -1,8 +1,7 @@
-from django.db import models # noqa
 """
 Database models.
 """
-
+from django.db import models # noqa
 import uuid
 import os
 from django.contrib.auth.models import (
@@ -10,8 +9,8 @@ from django.contrib.auth.models import (
     BaseUserManager,
     PermissionsMixin,
 )
-
 from django.conf import settings
+
 
 def recipe_image_file_path(instance, filename):
     """Generate file path for new recipe image."""
@@ -43,6 +42,7 @@ class UserManager(BaseUserManager):
 
         return user
 
+
 class User(AbstractBaseUser, PermissionsMixin):
     """User in the system."""
     email = models.EmailField(max_length=255, unique=True)
@@ -53,6 +53,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
+
 
 class Recipe(models.Model):
     """Recipe object."""
@@ -72,6 +73,7 @@ class Recipe(models.Model):
     def __str__(self):
         return self.title
 
+
 class Tag(models.Model):
     """Tag for filtering recipes."""
     name = models.CharField(max_length=255)
@@ -82,6 +84,7 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Ingredient(models.Model):
     """Ingredient for recipes."""

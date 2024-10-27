@@ -2,17 +2,14 @@
 Tests for recipe APIs.
 """
 from decimal import Decimal
-
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
-
 from rest_framework import status
 from rest_framework.test import APIClient
+from regcore.models import (Recipe, Tag, Ingredient,)
 
-from regcore.models import (Recipe, Tag, Ingredient)
-
-from recipe.serializer import (RecipeSerializer,RecipeDetailSerializer,)
+from recipe.serializer import (RecipeSerializer, RecipeDetailSerializer,)
 import tempfile
 import os
 
@@ -30,6 +27,7 @@ def image_upload_url(recipe_id):
     """Create and return an image upload URL."""
     return reverse('recipe:recipe-upload-image', args=[recipe_id])
 
+
 def create_recipe(user, **params):
     """Create and return a sample recipe."""
     defaults = {
@@ -44,9 +42,11 @@ def create_recipe(user, **params):
     recipe = Recipe.objects.create(user=user, **defaults)
     return recipe
 
+
 def create_user(**params):
     """Create and return a new user."""
     return get_user_model().objects.create_user(**params)
+
 
 class PublicRecipeAPITests(TestCase):
     """Test unauthenticated API requests."""
@@ -71,6 +71,7 @@ class PrivateRecipeApiTests(TestCase):
             'testpass123',
         )
         self.client.force_authenticate(self.user)
+
     def test_retrieve_recipes(self):
         """Test retrieving a list of recipes."""
         create_recipe(user=self.user)
@@ -99,7 +100,6 @@ class PrivateRecipeApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
 
-
     def test_get_recipe_detail(self):
         """Test get recipe detail."""
         recipe = create_recipe(user=self.user)
@@ -109,7 +109,6 @@ class PrivateRecipeApiTests(TestCase):
 
         serializer = RecipeDetailSerializer(recipe)
         self.assertEqual(res.data, serializer.data)
-
 
     def test_create_recipe(self):
         """Test creating a recipe."""
@@ -125,8 +124,6 @@ class PrivateRecipeApiTests(TestCase):
         for k, v in payload.items():
             self.assertEqual(getattr(recipe, k), v)
         self.assertEqual(recipe.user, self.user)
-
-
 
     def test_partial_update(self):
         """Test partial update of a recipe."""
@@ -205,7 +202,6 @@ class PrivateRecipeApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
         self.assertTrue(Recipe.objects.filter(id=recipe.id).exists())
 
-
     def test_create_recipe_with_new_tags(self):
         """Test creating a recipe with new tags."""
         payload = {
@@ -252,7 +248,6 @@ class PrivateRecipeApiTests(TestCase):
             ).exists()
             self.assertTrue(exists)
 
-
     def test_create_tag_on_update(self):
         """Test create tag when updating a recipe."""
         recipe = create_recipe(user=self.user)
@@ -292,7 +287,6 @@ class PrivateRecipeApiTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(recipe.tags.count(), 0)
-
 
     def test_create_recipe_with_new_ingredients(self):
         """Test creating a recipe with new ingredients."""
@@ -340,7 +334,6 @@ class PrivateRecipeApiTests(TestCase):
             ).exists()
             self.assertTrue(exists)
 
-
     def test_create_ingredient_on_update(self):
         """Test creating an ingredient when updating a recipe."""
         recipe = create_recipe(user=self.user)
@@ -380,6 +373,7 @@ class PrivateRecipeApiTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(recipe.ingredients.count(), 0)
+
 
 class ImageUploadTests(TestCase):
     """Tests for the image upload API."""

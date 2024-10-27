@@ -8,7 +8,6 @@ from regcore import models
 from unittest.mock import patch
 
 
-
 def create_user(email='user22@example.com', password='testpass123'):
     """Create a return a new user."""
     return get_user_model().objects.create_user(email, password)
@@ -28,7 +27,6 @@ class ModelTests(TestCase):
 
         self.assertEqual(user.email, email)
         self.assertTrue(user.check_password(password))
-
 
     def test_new_user_email_normalized(self):
         """Test email is normalized for new users."""
@@ -89,7 +87,6 @@ class ModelTests(TestCase):
         )
 
         self.assertEqual(str(ingredient), ingredient.name)
-
 
     @patch('regcore.models.uuid.uuid4')
     def test_recipe_file_name_uuid(self, mock_uuid):

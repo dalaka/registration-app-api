@@ -1,21 +1,14 @@
-from django.shortcuts import render
 """
 Views for the recipe APIs
 """
-from rest_framework import viewsets
-from rest_framework import (
-    viewsets,
-    mixins,
-    status,
-)
-
+from rest_framework import (viewsets, mixins, status,)
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 # Create your views here.
-from regcore.models import (Recipe,Tag,Ingredient)
+from regcore.models import (Recipe, Tag, Ingredient)
 from recipe import serializer
 from drf_spectacular.utils import (
     extend_schema_view,
@@ -69,7 +62,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
             user=self.request.user
         ).order_by('-id').distinct()
 
-
     def get_serializer_class(self):
         """Return the serializer class for request."""
         if self.action == 'list':
@@ -77,8 +69,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         elif self.action == 'upload_image':
             return serializer.RecipeImageSerializer
-
-
         return self.serializer_class
 
     def perform_create(self, serializer):
@@ -96,7 +86,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 @extend_schema_view(
@@ -131,12 +120,12 @@ class BaseRecipeAttrViewSet(mixins.DestroyModelMixin,
             user=self.request.user
         ).order_by('-name').distinct()
 
+
 class TagViewSet(BaseRecipeAttrViewSet):
 
     """Manage tags in the database."""
     serializer_class = serializer.TagSerializer
     queryset = Tag.objects.all()
-
 
 
 class IngredientViewSet(BaseRecipeAttrViewSet):
